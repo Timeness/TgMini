@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini App</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body class="dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <div class="container mx-auto p-4">
+        <!-- Main Card -->
+        <div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+            <div class="p-8">
+                <!-- Header -->
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
+                        Hello, Telegram User! 👋
+                    </h1>
+                </div>
+
+                <!-- User Info Section -->
+                <div class="space-y-4 mb-6">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">User ID:</span>
+                        <span id="user-id" class="font-medium text-gray-800 dark:text-white">-</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600 dark:text-gray-300">First Name:</span>
+                        <span id="first-name" class="font-medium text-gray-800 dark:text-white">-</span>
+                    </div>
+                </div>
+
+                <!-- Buttons Section -->
+                <div class="space-y-3">
+                    <button 
+                        onclick="showUserData()"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        Show My Info
+                    </button>
+                    
+                    <button 
+                        onclick="Telegram.WebApp.close()"
+                        class="w-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        Close App
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Telegram Web App
+        document.addEventListener('DOMContentLoaded', function() {
+            initTelegramWebApp();
+        });
+
+        function initTelegramWebApp() {
+            // Set theme based on Telegram theme
+            const theme = Telegram.WebApp.colorScheme;
+            document.body.setAttribute('data-theme', theme);
+            
+            // Set background color from Telegram theme
+            document.body.style.backgroundColor = Telegram.WebApp.backgroundColor;
+            
+            // Listen for theme changes
+            Telegram.WebApp.onEvent('themeChanged', () => {
+                const newTheme = Telegram.WebApp.colorScheme;
+                document.body.setAttribute('data-theme', newTheme);
+                document.body.style.backgroundColor = Telegram.WebApp.backgroundColor;
+            });
+        }
+
+        function showUserData() {
+            const user = Telegram.WebApp.initDataUnsafe.user;
+            if (user) {
+                document.getElementById('user-id').textContent = user.id;
+                document.getElementById('first-name').textContent = user.first_name;
+            } else {
+                alert('User data not available');
+            }
+        }
+    </script>
+</body>
+</html>
