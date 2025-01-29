@@ -3,94 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram User Info</title>
+    <title>Telegram Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Signika:wght@300..700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Signika', sans-serif;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;400;600&display=swap');
+        body { font-family: 'Signika', sans-serif; }
     </style>
 </head>
-<body class="bg-gradient-to-br from-purple-500 to-pink-500 min-h-screen">
-    <div class="container mx-auto p-4">
-        <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl p-6 space-y-6">
-            <!-- Header Section -->
-            <div class="flex justify-between items-center">
-                <h1 class="text-3xl font-bold text-gray-800">User Profile</h1>
-                <button onclick="toggleFullScreen()" class="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-all">
-                    Full Screen
-                </button>
-            </div>
+<body class="bg-gray-900 text-white flex justify-center items-center min-h-screen">
 
-            <!-- Profile Section -->
-            <div class="flex items-center space-x-6">
-                <img id="user-photo" src="" class="w-24 h-24 rounded-full border-4 border-purple-200 object-cover">
-                <div>
-                    <h2 id="user-name" class="text-2xl font-semibold text-gray-800"></h2>
-                    <p id="user-username" class="text-gray-600"></p>
-                </div>
-            </div>
+    <div id="app" class="w-full max-w-md p-6 text-center"></div>
 
-            <!-- Details Section -->
-            <div class="space-y-4">
-                <div class="bg-gray-50 p-4 rounded-xl">
-                    <label class="text-sm text-gray-500">User ID</label>
-                    <p id="user-id" class="font-mono text-gray-800"></p>
-                </div>
+    <script type="text/babel">
+        function App() {
+            const [user, setUser] = React.useState(null);
 
-                <div class="bg-gray-50 p-4 rounded-xl">
-                    <label class="text-sm text-gray-500">Bio</label>
-                    <p id="user-bio" class="text-gray-800 italic"></p>
-                </div>
-            </div>
+            React.useEffect(() => {
+                const tg = window.Telegram.WebApp;
+                tg.expand(); // Enable full-screen mode
+                tg.ready();
 
-            <!-- Additional Info -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-purple-500 p-4 rounded-xl text-white text-center">
-                    <p class="text-sm">First Name</p>
-                    <p id="user-first-name" class="font-bold"></p>
-                </div>
-                <div class="bg-pink-500 p-4 rounded-xl text-white text-center">
-                    <p class="text-sm">Last Name</p>
-                    <p id="user-last-name" class="font-bold"></p>
-                </div>
-            </div>
-        </div>
-    </div>
+                const initData = tg.initDataUnsafe?.user;
+                if (initData) {
+                    setUser({
+                        id: initData.id,
+                        name: initData.first_name + (initData.last_name ? ' ' + initData.last_name : ''),
+                        username: initData.username || 'No username',
+                        bio: tg.initDataUnsafe?.user?.bio || 'No bio available',
+                        photo: initData.photo_url
+                    });
+                }
+            }, []);
 
-    <script>
-        function toggleFullScreen() {
-            if (!WebApp.isExpanded) {
-                WebApp.expand();
-            }
+            return (
+                <div className="flex flex-col items-center space-y-4">
+                    <h1 className="text-2xl font-bold">Welcome to Mini App</h1>
+                    {user ? (
+                        <>
+                            {user.photo && <img src={user.photo} alt="Profile" className="w-24 h-24 rounded-full border-4 border-blue-500 shadow-lg" />}
+                            <p className="text-lg font-semibold">{user.name}</p>
+                            <p className="text-sm text-gray-400">@{user.username}</p>
+                            <p className="text-sm text-gray-400">{user.bio}</p>
+                            <p className="text-sm text-gray-500">User ID: {user.id}</p>
+                        </>
+                    ) : (
+                        <p>Loading user data...</p>
+                    )}
+                </div>
+            );
         }
 
-        function updateUserInfo() {
-            const user = WebAppInitDataUnsafe.user;
-            
-            // Set user photo
-            const photo = document.getElementById('user-photo');
-            if (user.photo_url) {
-                photo.src = user.photo_url;
-            } else {
-                photo.src = 'https://via.placeholder.com/150';
-            }
-
-            // Set user information
-            document.getElementById('user-id').textContent = user.id;
-            document.getElementById('user-name').textContent = `${user.first_name} ${user.last_name || ''}`;
-            document.getElementById('user-username').textContent = `@${user.username || 'no_username'}`;
-            document.getElementById('user-bio').textContent = user.bio || 'No bio available';
-            document.getElementById('user-first-name').textContent = user.first_name;
-            document.getElementById('user-last-name').textContent = user.last_name || '-';
-        }
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => {
-            updateUserInfo();
-        });
+        ReactDOM.createRoot(document.getElementById('app')).render(<App />);
     </script>
+
 </body>
 </html>
