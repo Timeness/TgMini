@@ -1,0 +1,43 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="A sample Vue.js application with a full background image using Tailwind CSS">
+    <meta name="keywords" content="Vue.js, Tailwind CSS, Full Background Image, Responsive Design">
+    <meta name="author" content="Your Name">
+    <title>Vue.js App with Full Background Image</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://registry.npmmirror.com/vue/3.3.11/files/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+        #app {
+            background-image: url('https://framerusercontent.com/images/1OR3XFfkJHF1nKzQotkFjklu3FQ.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="flex items-center justify-center h-full">
+            <h1 class="text-white text-4xl">Hello Vue!</h1>
+        </div>
+    </div>
+    <script>
+        const { createApp, ref } = Vue
+        createApp({
+            setup() {
+                const message = ref('Hello Vue!')
+                return {
+                    message
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
